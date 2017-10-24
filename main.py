@@ -36,13 +36,13 @@ def load_vgg(sess, vgg_path):
     
     graph = tf.get_default_graph()
     
-    input_tensor = graph.get_tensor_by_name(vgg_input_tensor_name)
+    input_image = graph.get_tensor_by_name(vgg_input_tensor_name)
     keep_prob = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
     layer3 = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
     layer4 = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
     layer7 = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
     
-    return input_tensor, keep_prob, layer3, layer4, layer7
+    return input_image, keep_prob, layer3, layer4, layer7
 
 tests.test_load_vgg(load_vgg, tf)
 
@@ -60,19 +60,21 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     regularizer = tf.contrib.layers.l2_regularizer(1e-3)
     initializer = tf.truncated_normal_initializer(stddev= 0.01)
     
-    conv1x1_7th = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1,1), padding="same", kernel_initializer=initializer kernel_regularizer=regularizer, name="conv1x1_7th")
+    conv1x1_7th = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, strides=(1,1), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="conv1x1_7th")
     
-    skip_7 = tf.layers.conv2d_transpose(conv1x1_7th, num_classes, 8, strides=(4,4), padding="same", kernel_initializer=initializer kernel_regularizer=regularizer, name="skip_7")
+    skip_7 = tf.layers.conv2d_transpose(conv1x1_7th, num_classes, 8, strides=(4,4), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="skip_7")
     
-    conv1x1_4th = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, strides=(1,1), padding="same", kernel_initializer=initializer kernel_regularizer=regularizer, name="conv1x1_4th")
+    conv1x1_4th = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, strides=(1,1), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="conv1x1_4th")
     
-    skip_4 = tf.layers.conv2d_transpose(conv1x1_4th, num_classes, 2, strides=(2,2), padding="same", kernel_initializer=initializer kernel_regularizer=regularizer, name="skip_4")
+    skip_4 = tf.layers.conv2d_transpose(conv1x1_4th, num_classes, 2, strides=(2,2), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="skip_4")
     
     added_7_4 = tf.add(skip_4, skip_7, name="added_7_4")
     
-    conv1x1_3rd = tf.layers.conv2d(vgg_layer3_out, num_classes, 2, strides=(1,1), padding="same", kernel_initializer=initializer kernel_regularizer=regularizer, name="conv1x1_3rd")
+    conv1x1_3rd = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, strides=(1,1), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="conv1x1_3rd")
     
-    output = tf.add(added_7_4, conv1x1_3rd, name="output")
+    sum = tf.add(added_7_4, conv1x1_3rd, name="output")
+    
+    output = tf.layers.conv2d_transpose(sum, num_classes, 16, strides=(8,8), padding="same", kernel_initializer=initializer, kernel_regularizer=regularizer, name="output")
     
     return output
 
@@ -117,7 +119,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
-    
+    sess.run(tf.global_variables_initializer())
     for epoch in range(epochs):
         for images, labels in get_batches_fn(batch_size):
             sess.run(train_op, feed_dict={input_image: images, correct_label: labels})
@@ -145,11 +147,12 @@ def run():
     with tf.Session() as sess:
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
+        
         # Create function to get batches
         get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
 
         # TODO: Build NN using load_vgg, layers, and optimize function
-        input_tensor, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
+        input_image, keep_prob, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
         
         model_output = layers(layer3, layer4, layer7, num_classes)
         
