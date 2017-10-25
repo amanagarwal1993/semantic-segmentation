@@ -136,7 +136,7 @@ def run():
     runs_dir = './runs'
     tests.test_for_kitti_dataset(data_dir)
     epochs = 20
-    batch_size = 12
+    batch_size = 24
     learning_rate = 0.001
     
     # Download pretrained vgg model
