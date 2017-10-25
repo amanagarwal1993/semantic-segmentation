@@ -136,7 +136,7 @@ def run():
     tests.test_for_kitti_dataset(data_dir)
     epochs = 100
     batch_size = 10
-    correct_label = tf.placeholder(tf.int32, image_shape)
+    correct_label = tf.placeholder(tf.int32, [None, None, None, num_classes])
     learning_rate = 0.003
     
     # Download pretrained vgg model
