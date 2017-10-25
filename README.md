@@ -4,9 +4,9 @@ In this project, I label the pixels of a road in images using a Fully Convolutio
 
 ##### Examples:
 
-![Image](runs/FINAL MODEL/um_000002.png)
-![Image](runs/FINAL MODEL/um_000005.png)
-![Image](runs/FINAL MODEL/um_000014.png)
+![Image](runs/"FINAL MODEL"/um_000002.png)
+![Image](runs/"FINAL MODEL"/um_000005.png)
+![Image](runs/"FINAL MODEL"/um_000014.png)
 
 ### Setup
 ##### Frameworks and Packages
