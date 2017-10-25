@@ -4,9 +4,9 @@ In this project, I label the pixels of a road in images using a Fully Convolutio
 
 ##### Examples:
 
-![Image](runs/"FINAL MODEL"/um_000002.png?raw=true)
-![Image](runs/"FINAL MODEL"/um_000005.png?raw=true)
-![Image](runs/"FINAL MODEL"/um_000014.png?raw=true)
+![Image](https://github.com/amanagarwal1993/semantic-segmentation/blob/master/runs/FINAL%20MODEL/um_000002.png?raw=true)
+![Image](https://github.com/amanagarwal1993/semantic-segmentation/blob/master/runs/FINAL%20MODEL/um_000005.png?raw=true)
+![Image](https://github.com/amanagarwal1993/semantic-segmentation/blob/master/runs/FINAL%20MODEL/um_000014.png?raw=true)
 
 ### Setup
 ##### Frameworks and Packages
